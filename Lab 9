@@ -1,0 +1,110 @@
+from abc import ABC, abstractmethod
+
+
+class Product1(ABC):
+    @abstractmethod
+    def product_method(self):
+        pass
+
+
+class ConcreteProduct11(Product1):
+    def product_method(self):
+        print("Продукт 1.1")
+
+
+class ConcreteProduct12(Product1):
+    def product_method(self):
+        print("Продукт 1.2")
+
+
+
+class Product2(ABC):
+    @abstractmethod
+    def product_method(self):
+        pass
+
+
+
+class ConcreteProduct21(Product2):
+    def product_method(self):
+        print("Продукт 2.1")
+
+
+
+class ConcreteProduct22(Product2):
+    def product_method(self):
+        print("Продукт 2.2")
+
+
+
+class FactoryInterface(ABC):
+    @abstractmethod
+    def create_product1(self) -> Product1:
+        pass
+
+    @abstractmethod
+    def create_product2(self) -> Product2:
+        pass
+
+
+
+class ConcreteFactory(FactoryInterface):
+    def __init__(self, product_type: str):
+        self.product_type = product_type
+
+    def create_product1(self) -> Product1:
+        if self.product_type == 'type1':
+            return ConcreteProduct11()
+        elif self.product_type == 'type2':
+            return ConcreteProduct12()
+
+    def create_product2(self) -> Product2:
+        if self.product_type == 'type1':
+            return ConcreteProduct21()
+        elif self.product_type == 'type2':
+            return ConcreteProduct22()
+
+
+
+class ProductBuilder:
+    def __init__(self):
+        self.product1 = None
+        self.product2 = None
+        self.factory = None
+
+    def set_factory(self, factory: FactoryInterface):
+        self.factory = factory
+
+    def build_product1(self):
+        self.product1 = self.factory.create_product1()
+
+    def build_product2(self):
+        self.product2 = self.factory.create_product2()
+
+    def get_product1(self) -> Product1:
+        return self.product1
+
+    def get_product2(self) -> Product2:
+        return self.product2
+
+
+def create_products(factory: FactoryInterface):
+    builder = ProductBuilder()
+    builder.set_factory(factory)
+    builder.build_product1()
+    builder.build_product2()
+    return builder.get_product1(), builder.get_product2()
+
+
+
+factory = ConcreteFactory('type1')
+product1, product2 = create_products(factory)
+
+product1.product_method()  
+product2.product_method()  
+
+factory = ConcreteFactory('type2')
+product1, product2 = create_products(factory)
+
+product1.product_method()  
+product2.product_method()  
